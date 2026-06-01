@@ -1,7 +1,20 @@
+import prismaClient from "../../prisma/index.js"
+interface CreateUserProps {
+    name: string,
+    email: string,
+    password: string;
+}
+
 class CreateUserService{
-    async execute(){
-        console.log('Executando service de criação de usuário');
-        return 'Usuário criado';
+    async execute({ name, email, password}: CreateUserProps){
+        const user = await prismaClient.user.create({
+            data: {
+                name: name,
+                email: email,
+                password: password
+            }
+        })
+        return user.name;
     }
 }
 
