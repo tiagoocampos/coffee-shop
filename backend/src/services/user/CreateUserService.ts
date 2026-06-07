@@ -1,3 +1,4 @@
+import { UserAlreadyExistsError } from "../../exceptions/UserAlreadyExistsError.js";
 import prismaClient from "../../prisma/index.js"
 import { hash } from "bcrypt";
 
@@ -17,7 +18,7 @@ class CreateUserService{
         })
 
         if(userAlreadyExists){
-            throw new Error("Usuário já cadastrado")
+            throw new UserAlreadyExistsError();
         }
 
         const passwordHash = await hash(password, 8)

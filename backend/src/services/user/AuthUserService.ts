@@ -1,3 +1,5 @@
+import prismaClient from "../../prisma/index.js";
+
 interface AuthUserProps{
     email: string;
     password: string;
@@ -5,7 +7,11 @@ interface AuthUserProps{
 
 class AuthUserService{
     async execute({ email, password}: AuthUserProps){
-        console.log({email, password});
+        const userExists = await prismaClient.user.findFirst({
+            where:{
+                email: email
+            }
+        });
 
         return "Logado com sucesso";
     }

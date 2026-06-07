@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError, ZodType} from 'zod';
+import { UserAlreadyExistsError } from '../exceptions/UserAlreadyExistsError.js';
 
 export const validateSchema = 
     (schema: ZodType) => async(req: Request, res: Response, next: NextFunction) => {
@@ -14,16 +15,6 @@ export const validateSchema =
         }
         catch (error) {
 
-            if(error instanceof ZodError){
-                return res.status(400).json({
-                    error: "Erro de validação", 
-                    details: error.issues.map(issue => ({
-                       
-                        message: issue.message,
-                    })),
-                });
-            }
-
-            return res.status(500).json({error: "Erro interno do servidor"});
+            return next(error);
         }
     }
