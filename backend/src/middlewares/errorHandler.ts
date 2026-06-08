@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 import { UserAlreadyExistsError } from '../exceptions/UserAlreadyExistsError.js';
+import { PasswordNotMatchError } from '../exceptions/passwordNotMatch.js';
 
 export const errorHandler = (
     error: Error,
@@ -18,6 +19,12 @@ export const errorHandler = (
     }
 
     if (error instanceof UserAlreadyExistsError) {
+        return res.status(error.statusCode).json({
+            error: error.message,
+        });
+    }
+
+    if (error instanceof PasswordNotMatchError){
         return res.status(error.statusCode).json({
             error: error.message,
         });

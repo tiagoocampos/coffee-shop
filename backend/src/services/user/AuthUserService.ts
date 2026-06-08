@@ -1,4 +1,7 @@
+import { compare } from "bcrypt";
 import prismaClient from "../../prisma/index.js";
+import jwt from "jsonwebtoken";
+import { PasswordNotMatchError } from "../../exceptions/passwordNotMatch.js";
 
 interface AuthUserProps{
     email: string;
@@ -7,13 +10,34 @@ interface AuthUserProps{
 
 class AuthUserService{
     async execute({ email, password}: AuthUserProps){
-        const userExists = await prismaClient.user.findFirst({
+        const user = await prismaClient.user.findFirst({
             where:{
                 email: email
             }
         });
 
-        return "Logado com sucesso";
+        if(!user){
+            throw new Error("Email/senha é obrigatório");
+        }
+
+        const passwordMatch = await compare(password, user.password);
+
+        if(!passwordMatch){
+            throw new PasswordNotMatchError();
+        }
+
+        const token = jwt.sign({
+            name: user.name,
+            email: user.email,
+        }, process.env.JWT_SECRET as string, {subject: user.id, expiresIn: "30d"});
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token
+        };
     }
 }
 
