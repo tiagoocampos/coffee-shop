@@ -11,6 +11,6 @@ const router = Router();
 
 router.post("/users", validateSchema(createUserSchema), new CreateUserController().handle)
 router.post("/session", validateSchema(authUserSchema), new AuthUserController().handle)
-router.get("/me", isAuthenticated,new DetailUserController().handle)
+router.get("/me", isAuthenticated, new DetailUserController().handle)
 
 export { router };
