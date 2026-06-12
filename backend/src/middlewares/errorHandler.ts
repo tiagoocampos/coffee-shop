@@ -4,6 +4,7 @@ import { UserAlreadyExistsError } from '../exceptions/UserAlreadyExistsError.js'
 import { PasswordNotMatchError } from '../exceptions/passwordNotMatch.js';
 import { UserNotFoundError } from '../exceptions/UserNotFoundError.js';
 import { InvalidToken } from '../exceptions/InvalidToken.js';
+import { CreateCategoryError, ListCategoriesError } from '../exceptions/CategoryErrors.js';
 
 export const errorHandler = (
     error: Error,
@@ -39,6 +40,18 @@ export const errorHandler = (
     }
 
     if(error instanceof InvalidToken){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        });
+    }
+
+    if(error instanceof CreateCategoryError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        });
+    }
+
+    if(error instanceof ListCategoriesError){
         return res.status(error.statusCode).json({
             error: error.message,
         });
