@@ -15,3 +15,12 @@ export class ListCategoriesError extends Error {
         Object.setPrototypeOf(this, ListCategoriesError.prototype);
     }
 }
+
+export class CategoryNotFoundError extends Error {
+    public statusCode: number = 404
+    constructor() {
+        super("Categoria nao encontrada");
+        this.name = "CategoryNotFoundError";
+        Object.setPrototypeOf(this, CategoryNotFoundError.prototype);
+    }
+}

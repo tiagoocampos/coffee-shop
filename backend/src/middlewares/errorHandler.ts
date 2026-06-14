@@ -4,7 +4,7 @@ import { UserAlreadyExistsError } from '../exceptions/UserAlreadyExistsError.js'
 import { PasswordNotMatchError } from '../exceptions/passwordNotMatch.js';
 import { UserNotFoundError } from '../exceptions/UserNotFoundError.js';
 import { InvalidToken } from '../exceptions/InvalidToken.js';
-import { CreateCategoryError, ListCategoriesError } from '../exceptions/CategoryErrors.js';
+import { CategoryNotFoundError, CreateCategoryError, ListCategoriesError } from '../exceptions/CategoryErrors.js';
 
 export const errorHandler = (
     error: Error,
@@ -57,5 +57,11 @@ export const errorHandler = (
         });
     }
 
-    return res.status(500).json({ error: "Erro interno do servidor" });
+    if(error instanceof CategoryNotFoundError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        })
+    }
+
+    return res.status(500).json({ error: "Erro interno" });
 };
