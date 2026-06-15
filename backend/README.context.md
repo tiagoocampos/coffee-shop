@@ -70,6 +70,8 @@ Estrutura relevante:
 - `backend/src/schemas/`
   - `userSchema.ts` (Zod schemas para user)
   - `categorySchema.ts` (Zod schema para categoria)
+  - `productsSchema.ts` (Zod schema para query de listagem de produtos)
+
 
 - `backend/src/exceptions/`
   - Erros customizados com `statusCode` e `message`.
@@ -126,6 +128,54 @@ Base: rotas definidas em `backend/src/routes.ts`.
 - Service: `CreateCategoryService.execute`
 - Body (conforme `CreateCategorySchema`):
   - `body.name` (string, min 3, max 45)
+
+### 4.5) `GET /category`
+- Middlewares:
+  - `isAuthenticated`
+- Controller: `ListCategoriesController().handle`
+- Service: `ListCategoriesService.execute`
+- Resposta:
+  - lista de categorias com `{ id, name, createdAt }`
+
+---
+
+### 4.6) `POST /product`
+- Middlewares:
+  - `isAuthenticated`
+  - `isAdmin`
+  - `upload.single("file")` (multer)
+  - `validateSchema(CreateProductSchema)`
+- Controller: `CreateProductController().handle`
+- Service: `CreateProductService.execute`
+- Body / request (conforme `CreateProductSchema`):
+  - `body.name` (string, min 1)
+  - `body.description` (string, min 1)
+  - `body.price` (string numérica, min 1)
+  - `body.category_id` (string, min 1)
+- Upload:
+  - campo `file` (imagem do banner do produto)
+
+### 4.7) `GET /product`
+- Middlewares:
+  - `isAuthenticated`
+- Observação:
+  - rota está declarada em `backend/src/routes.ts` como `router.get("/product", isAuthenticated)`.
+  - esta rota não possui controller explicitado no documento (verificar implementação).
+
+### 4.8) `GET /products`
+- Middlewares:
+  - `isAuthenticated`
+  - `validateSchema(productsSchema)`
+- Controller: `ListProductsController().handle`
+- Service: `ListProductsService.execute`
+- Query params (conforme regra do endpoint):
+  - `disabled` (string: `true` ou `false`)
+  - comportamento:
+    - se `disabled` não for enviado, usa `disabled=false` como padrão
+    - se `disabled=true`, filtra apenas produtos com `disabled=true`
+    - se `disabled=false`, filtra apenas produtos com `disabled=false`
+
+
 
 ---
 

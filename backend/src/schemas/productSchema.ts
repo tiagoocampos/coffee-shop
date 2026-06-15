@@ -18,3 +18,23 @@ export const CreateProductSchema = z.object ({
         })
 
     })
+
+export const ListProductsSchema = z.object({
+  query: z
+    .object({
+      disabled: z
+      .string()
+      .optional()      
+    }),
+});
+
+export const ListProductsByCategorySchema = z.object({
+  query: z.object({
+    category_id: z
+      .string({ message: "O id da categoria é obrigatório" })
+      .min(1, { message: "A categoria do produto é obrigatória" }),
+  }),
+});
+
+
+
