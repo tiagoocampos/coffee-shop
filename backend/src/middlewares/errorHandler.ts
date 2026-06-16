@@ -6,6 +6,7 @@ import { UserNotFoundError } from '../exceptions/UserNotFoundError.js';
 import { InvalidToken } from '../exceptions/InvalidToken.js';
 import { CategoryNotFoundError, CreateCategoryError, ListCategoriesError } from '../exceptions/CategoryErrors.js';
 import { DeleteProductError, ListProductsError } from '../exceptions/ProductErrors.js';
+import { CreateOrderError } from '../exceptions/OrdersErrors.js';
 
 export const errorHandler = (
     error: Error,
@@ -71,6 +72,12 @@ export const errorHandler = (
     }
 
     if(error instanceof DeleteProductError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        })
+    }
+
+    if(error instanceof CreateOrderError){
         return res.status(error.statusCode).json({
             error: error.message,
         })

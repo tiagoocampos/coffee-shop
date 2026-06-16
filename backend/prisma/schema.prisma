@@ -45,6 +45,7 @@ model Product{
   description String
   banner String
   disabled Boolean @default(false)
+  
   items Item[]
   category_id String
   category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)

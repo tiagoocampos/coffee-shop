@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+
 import multer from 'multer';
 import uploadConfig from "./config/multer.js";
 import { CreateUserController } from './controllers/user/createUserController.js';
@@ -18,14 +19,14 @@ import { ListProductsSchema } from './schemas/productSchema.js';
 import { DeleteProductController } from './controllers/product/DeleteProductController.js';
 import { ListProductsByCategoryController } from './controllers/product/ListProductsByCategoryController.js';
 import { ListProductsByCategorySchema } from './schemas/productSchema.js';
-
-
-
-
-
+import { CreateOrderController } from './controllers/order/CreateOrderController.js';
+import { CreateOrderSchema } from './schemas/orderSchema.js';
+import { ListOrdersController } from './controllers/order/ListOrdersController.js';
 
 const router = Router();
 const upload = multer(uploadConfig);
+
+
 
 router.post("/users", validateSchema(createUserSchema), new CreateUserController().handle)
 router.post("/session", validateSchema(authUserSchema), new AuthUserController().handle)
@@ -40,6 +41,9 @@ router.get("/products", isAuthenticated, validateSchema(ListProductsSchema), new
 // busca produtos por categoria (apenas logado)
 router.get("/category/product", isAuthenticated, validateSchema(ListProductsByCategorySchema), new ListProductsByCategoryController().handle);
 router.delete("/product", isAuthenticated, isAdmin, new DeleteProductController().handle)
+
+router.post("/order", isAuthenticated, validateSchema(CreateOrderSchema), new CreateOrderController().handle)
+router.get("/orders", isAuthenticated, new ListOrdersController().handle)
 
 export { router };
 
