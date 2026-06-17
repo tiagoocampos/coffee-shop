@@ -7,3 +7,16 @@ export const CreateOrderSchema = z.object({
   }),
 });
 
+export const AddItemSchema = z.object({
+  body: z.object({
+    amount: z.number().int().positive(),
+    order_id: z.string().min(1, { message: "A order_id deve ser informada" }),
+    product_id: z.string().min(1, { message: "O product_id deve ser informado" }),
+  })
+})
+
+export const RemoveItemSchema = z.object({
+  query: z.object({
+    item_id: z.string({ message: "O item_id deve ser uma string"}).min(1, { message: "item_id deve ser informado" }),
+  })
+})

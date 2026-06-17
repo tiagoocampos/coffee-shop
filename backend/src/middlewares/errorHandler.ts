@@ -6,7 +6,8 @@ import { UserNotFoundError } from '../exceptions/UserNotFoundError.js';
 import { InvalidToken } from '../exceptions/InvalidToken.js';
 import { CategoryNotFoundError, CreateCategoryError, ListCategoriesError } from '../exceptions/CategoryErrors.js';
 import { DeleteProductError, ListProductsError } from '../exceptions/ProductErrors.js';
-import { CreateOrderError } from '../exceptions/OrdersErrors.js';
+import { AddItemError, CreateOrderError, ItemNotFoundError, RemoveItemError } from '../exceptions/OrdersErrors.js';
+
 
 export const errorHandler = (
     error: Error,
@@ -24,10 +25,11 @@ export const errorHandler = (
     }
 
     if (error instanceof UserAlreadyExistsError) {
-        return res.status(error.statusCode).json({
+        return res.status((error as any).statusCode).json({
             error: error.message,
         });
     }
+
 
     if (error instanceof PasswordNotMatchError){
         return res.status(error.statusCode).json({
@@ -83,5 +85,24 @@ export const errorHandler = (
         })
     }
 
+    if(error instanceof AddItemError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        })
+    }
+
+    if(error instanceof ItemNotFoundError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        })
+    }
+
+    if(error instanceof RemoveItemError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        })
+    }
+
     return res.status(500).json({ error: "Erro interno" });
 };
+

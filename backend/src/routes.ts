@@ -20,11 +20,14 @@ import { DeleteProductController } from './controllers/product/DeleteProductCont
 import { ListProductsByCategoryController } from './controllers/product/ListProductsByCategoryController.js';
 import { ListProductsByCategorySchema } from './schemas/productSchema.js';
 import { CreateOrderController } from './controllers/order/CreateOrderController.js';
-import { CreateOrderSchema } from './schemas/orderSchema.js';
+import { AddItemSchema, CreateOrderSchema, RemoveItemSchema } from './schemas/orderSchema.js';
 import { ListOrdersController } from './controllers/order/ListOrdersController.js';
+import { AddItemController } from './controllers/order/AddItemController.js';
+import { RemoveItemController } from './controllers/order/RemoveItemController.js';
 
 const router = Router();
 const upload = multer(uploadConfig);
+
 
 
 
@@ -37,13 +40,15 @@ router.post("/category", isAuthenticated, isAdmin, validateSchema(CreateCategory
 
 router.post("/product", isAuthenticated, isAdmin, upload.single("file"), validateSchema(CreateProductSchema), new CreateProductController().handle);
 router.get("/products", isAuthenticated, validateSchema(ListProductsSchema), new ListProductsController().handle)
-
-// busca produtos por categoria (apenas logado)
 router.get("/category/product", isAuthenticated, validateSchema(ListProductsByCategorySchema), new ListProductsByCategoryController().handle);
 router.delete("/product", isAuthenticated, isAdmin, new DeleteProductController().handle)
 
 router.post("/order", isAuthenticated, validateSchema(CreateOrderSchema), new CreateOrderController().handle)
 router.get("/orders", isAuthenticated, new ListOrdersController().handle)
+router.post("/order/add",  isAuthenticated, validateSchema(AddItemSchema),new AddItemController().handle)
+router.delete("/order/remove", isAuthenticated, validateSchema(RemoveItemSchema), new RemoveItemController().handle)
 
 export { router };
+
+
 
