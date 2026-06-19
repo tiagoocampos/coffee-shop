@@ -20,3 +20,12 @@ export const RemoveItemSchema = z.object({
     item_id: z.string({ message: "O item_id deve ser uma string"}).min(1, { message: "item_id deve ser informado" }),
   })
 })
+
+export const SendOrderSchema = z.object({
+  body: z.object({
+    order_id: z
+      .string({ message: "O order_id deve ser um texto" }),
+    name: z
+      .string({ message: "O name deve ser informado" })
+  })
+})

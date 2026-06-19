@@ -34,3 +34,14 @@ export class ItemNotFoundError extends Error {
     }
 }
 
+export class OrderNotFoundError extends Error {
+    public statusCode: number = 404
+    constructor() {
+        super("Order não encontrada");
+        this.name = "OrderNotFoundError";
+        Object.setPrototypeOf(this, OrderNotFoundError.prototype);
+    }
+}
+
+
+

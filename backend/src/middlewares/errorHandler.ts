@@ -6,7 +6,8 @@ import { UserNotFoundError } from '../exceptions/UserNotFoundError.js';
 import { InvalidToken } from '../exceptions/InvalidToken.js';
 import { CategoryNotFoundError, CreateCategoryError, ListCategoriesError } from '../exceptions/CategoryErrors.js';
 import { DeleteProductError, ListProductsError } from '../exceptions/ProductErrors.js';
-import { AddItemError, CreateOrderError, ItemNotFoundError, RemoveItemError } from '../exceptions/OrdersErrors.js';
+import { AddItemError, CreateOrderError, ItemNotFoundError, OrderNotFoundError, RemoveItemError } from '../exceptions/OrdersErrors.js';
+
 
 
 export const errorHandler = (
@@ -103,6 +104,14 @@ export const errorHandler = (
         })
     }
 
+    if(error instanceof OrderNotFoundError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+        })
+    }
+
     return res.status(500).json({ error: "Erro interno" });
 };
+
+
 
