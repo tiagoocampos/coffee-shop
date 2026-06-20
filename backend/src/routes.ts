@@ -20,7 +20,7 @@ import { DeleteProductController } from './controllers/product/DeleteProductCont
 import { ListProductsByCategoryController } from './controllers/product/ListProductsByCategoryController.js';
 import { ListProductsByCategorySchema } from './schemas/productSchema.js';
 import { CreateOrderController } from './controllers/order/CreateOrderController.js';
-import { AddItemSchema, CreateOrderSchema, FinishOrderSchema, RemoveItemSchema, SendOrderSchema } from './schemas/orderSchema.js';
+import { AddItemSchema, CreateOrderSchema, DeleteOrderSchema, FinishOrderSchema, RemoveItemSchema, SendOrderSchema } from './schemas/orderSchema.js';
 import { ListOrdersController } from './controllers/order/ListOrdersController.js';
 import { DetailOrderController } from './controllers/order/DetailOrderController.js';
 import { OrderDetailSchema } from './schemas/orderDetailSchema.js';
@@ -28,6 +28,7 @@ import { AddItemController } from './controllers/order/AddItemController.js';
 import { RemoveItemController } from './controllers/order/RemoveItemController.js';
 import { SendOrderController } from './controllers/order/SendOrderController.js';
 import { FinishOrderController } from './controllers/order/FinishOrderController.js';
+import { DeleteOrderController } from './controllers/order/DeleteOrderController.js';
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -54,7 +55,7 @@ router.post("/order/add",  isAuthenticated, validateSchema(AddItemSchema),new Ad
 router.delete("/order/remove", isAuthenticated, validateSchema(RemoveItemSchema), new RemoveItemController().handle)
 router.put("/order/send", isAuthenticated, validateSchema(SendOrderSchema),new SendOrderController().handle)
 router.put("/order/finish", isAuthenticated, validateSchema(FinishOrderSchema),new FinishOrderController().handle)
-
+router.delete("/order", isAuthenticated, validateSchema(DeleteOrderSchema),new DeleteOrderController().handle)
 export { router };
 
 

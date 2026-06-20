@@ -36,3 +36,10 @@ export const FinishOrderSchema = z.object({
       .string({ message: "O order_id deve ser um texto" }),
   })
 })
+
+export const DeleteOrderSchema = z.object({
+  query: z.object({
+    order_id: z
+      .string({ message: "O order_id deve ser um texto" }),
+  })
+})
