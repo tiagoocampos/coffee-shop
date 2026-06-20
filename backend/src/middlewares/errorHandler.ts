@@ -21,6 +21,7 @@ export const errorHandler = (
             error: "Erro de validação",
             details: error.issues.map(issue => ({
                 message: issue.message,
+                path: issue.path[1],
             })),
         });
     }
