@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import prismaClient from "../../prisma/index.js";
 import jwt from "jsonwebtoken";
 import { PasswordNotMatchError } from "../../exceptions/passwordNotMatch.js";
+import { UserNotFoundError } from "../../exceptions/UserNotFoundError.js";
 
 interface AuthUserProps{
     email: string;
@@ -17,7 +18,7 @@ class AuthUserService{
         });
 
         if(!user){
-            throw new Error("Email/senha é obrigatório");
+            throw new UserNotFoundError();
         }
 
         const passwordMatch = await compare(password, user.password);

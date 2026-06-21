@@ -29,6 +29,7 @@ export const errorHandler = (
     if (error instanceof UserAlreadyExistsError) {
         return res.status((error as any).statusCode).json({
             error: error.message,
+            
         });
     }
 
@@ -36,12 +37,14 @@ export const errorHandler = (
     if (error instanceof PasswordNotMatchError){
         return res.status(error.statusCode).json({
             error: error.message,
+            field: "password",
         });
     }
 
     if (error instanceof UserNotFoundError){
         return res.status(error.statusCode).json({
             error: error.message,
+            field: "email",
         });
     }
 

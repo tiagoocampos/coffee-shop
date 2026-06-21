@@ -2,7 +2,7 @@
 export class PasswordNotMatchError extends Error {
     public statusCode: number = 401;
     constructor() {
-        super("Email/senha é obrigatório");
+        super("Senha incorreta");
         this.name = "PasswordNotMatchError";
         Object.setPrototypeOf(this, PasswordNotMatchError.prototype);
     }
