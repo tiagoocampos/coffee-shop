@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-      <Toaster richColors theme="light" />
+      <Toaster richColors theme="light" position="top-center" />
       <RoutesApp />
     </>
   )
