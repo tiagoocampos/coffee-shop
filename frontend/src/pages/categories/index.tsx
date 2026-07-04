@@ -10,11 +10,12 @@ import { getAuthHeaders, getStoredUser } from "../../lib/auth";
 import {
     applyFieldErrors,
     formatDate,
+    formatPrice,
     inputClassName,
     buttonClassName,
     showApiError,
 } from "../../lib/utils-api";
-import type { Category } from "../../types";
+import type { Category, Product } from "../../types";
 
 export function Categories() {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -22,6 +23,10 @@ export function Categories() {
     const [submitting, setSubmitting] = useState(false);
     const [name, setName] = useState("");
     const [errors, setErrors] = useState({ name: "" });
+
+    const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null);
+    const [categoryProducts, setCategoryProducts] = useState<Record<string, Product[]>>({});
+    const [loadingProducts, setLoadingProducts] = useState<string | null>(null);
 
     const user = getStoredUser();
     const isAdmin = user?.role === "ADMIN";
@@ -74,6 +79,40 @@ export function Categories() {
         }
     }
 
+    async function handleToggleProducts(categoryId: string) {
+        // Se já está expandida, só fecha
+        if (expandedCategoryId === categoryId) {
+            setExpandedCategoryId(null);
+            return;
+        }
+
+        setExpandedCategoryId(categoryId);
+
+        // Se já buscou os produtos dessa categoria antes, não busca de novo
+        if (categoryProducts[categoryId]) return;
+
+        const headers = getAuthHeaders();
+        if (!headers) return;
+
+        try {
+            setLoadingProducts(categoryId);
+
+            const response = await api.get(`/category/product?category_id=${categoryId}`, { headers });
+
+            setCategoryProducts((prev) => ({
+                ...prev,
+                [categoryId]: response.data,
+            }));
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                showApiError(error, "Erro ao carregar produtos da categoria");
+            }
+            setExpandedCategoryId(null);
+        } finally {
+            setLoadingProducts(null);
+        }
+    }
+
     return (
         <ProtectedRoute>
             <div className="min-h-screen bg-[#baa88d]">
@@ -114,14 +153,50 @@ export function Categories() {
                             {categories.map((category) => (
                                 <div
                                     key={category.id}
-                                    className="bg-gray-200 rounded-md p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+                                    className="bg-gray-200 rounded-md p-4 flex flex-col gap-2"
                                 >
-                                    <span className="text-sm font-medium text-gray-700">
-                                        {category.name}
-                                    </span>
-                                    <span className="text-xs text-gray-500">
-                                        Criada em {formatDate(category.createdAt)}
-                                    </span>
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {category.name}
+                                        </span>
+                                        <span className="text-xs text-gray-500">
+                                            Criada em {formatDate(category.createdAt)}
+                                        </span>
+                                        <button
+                                            onClick={() => handleToggleProducts(category.id)}
+                                            className="text-xs text-amber-950 underline text-left"
+                                        >
+                                            {expandedCategoryId === category.id
+                                                ? "Ocultar produtos"
+                                                : "Ver produtos"}
+                                        </button>
+                                    </div>
+
+                                    {expandedCategoryId === category.id && (
+                                        <div className="flex flex-col gap-2 border-t border-gray-300 pt-2">
+                                            {loadingProducts === category.id ? (
+                                                <Loading />
+                                            ) : categoryProducts[category.id]?.length ? (
+                                                categoryProducts[category.id].map((product) => (
+                                                    <div
+                                                        key={product.id}
+                                                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 bg-gray-100 rounded-sm p-2"
+                                                    >
+                                                        <span className="text-xs text-gray-700">
+                                                            {product.name}
+                                                        </span>
+                                                        <span className="text-xs text-gray-500">
+                                                            {formatPrice(product.price)}
+                                                        </span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-xs text-gray-500">
+                                                    Nenhum produto nessa categoria.
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

@@ -46,10 +46,12 @@ export function Orders() {
                 api.get("/products?disabled=false", { headers }),
             ]);
 
-            const allOrders = [...draftRes.data, ...sentRes.data].sort(
-                (a: Order, b: Order) =>
-                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
+            const allOrders = [...draftRes.data, ...sentRes.data]
+                .filter((order: Order) => !order.status) // remove pedidos já finalizados
+                .sort(
+                    (a: Order, b: Order) =>
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
 
             setOrders(allOrders);
             setProducts(productsRes.data);
@@ -74,7 +76,7 @@ export function Orders() {
 
             setSubmitting(true);
 
-            await api.post(
+            const response = await api.post(
                 "/order",
                 {
                     table: Number(table),
@@ -88,6 +90,13 @@ export function Orders() {
             setName("");
             setShowCreateForm(false);
             await fetchData();
+
+            // Abre automaticamente o formulário de "Adicionar item" pro pedido recém-criado
+            const newOrderId = response.data.id;
+            if (newOrderId) {
+                setAddItemOrderId(newOrderId);
+            }
+
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showApiError(error, "Erro ao criar pedido");
@@ -124,6 +133,7 @@ export function Orders() {
             setSelectedProductId("");
             setAmount("1");
             await fetchData();
+
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showApiError(error, "Erro ao adicionar item");
@@ -170,7 +180,8 @@ export function Orders() {
             await api.put("/order/finish", { order_id: orderId }, { headers });
 
             toast.success("Pedido finalizado!", { position: "top-center" });
-            await fetchData();
+            // Remove o pedido da tela imediatamente, sem esperar novo fetch
+            setOrders((prev) => prev.filter((order) => order.id !== orderId));
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showApiError(error, "Erro ao finalizar pedido");

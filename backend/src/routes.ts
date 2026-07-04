@@ -3,7 +3,6 @@ import { Request, Response, Router } from 'express';
 import multer from 'multer';
 import uploadConfig from "./config/multer.js";
 import { CreateUserController } from './controllers/user/createUserController.js';
-import { validateSchema } from './middlewares/validateSchema.js';
 import { createUserSchema, authUserSchema } from './schemas/userSchema.js';
 import { AuthUserController } from './controllers/user/AuthUserController.js';
 import { DetailUserController } from './controllers/user/DetailUserController.js';
@@ -29,6 +28,11 @@ import { RemoveItemController } from './controllers/order/RemoveItemController.j
 import { SendOrderController } from './controllers/order/SendOrderController.js';
 import { FinishOrderController } from './controllers/order/FinishOrderController.js';
 import { DeleteOrderController } from './controllers/order/DeleteOrderController.js';
+import { ListUsersAdminController } from './controllers/user/admin/ListUsersAdminController.js';
+import { UpdateUserRoleAdminController } from './controllers/user/admin/UpdateUserRoleAdminController.js';
+import { DeleteUserAdminController } from './controllers/user/admin/DeleteUserAdminController.js';
+import { updateUserRoleParamsSchema, updateUserRoleSchema } from './schemas/userAdminSchema.js';
+import { validateSchema } from './middlewares/validateSchema.js';
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -56,6 +60,10 @@ router.delete("/order/remove", isAuthenticated, validateSchema(RemoveItemSchema)
 router.put("/order/send", isAuthenticated, validateSchema(SendOrderSchema),new SendOrderController().handle)
 router.put("/order/finish", isAuthenticated, validateSchema(FinishOrderSchema),new FinishOrderController().handle)
 router.delete("/order", isAuthenticated, validateSchema(DeleteOrderSchema),new DeleteOrderController().handle)
+router.get("/admin/users", isAuthenticated, isAdmin, new ListUsersAdminController().handle)
+router.put("/admin/users/:id", isAuthenticated, isAdmin, validateSchema(updateUserRoleParamsSchema), validateSchema(updateUserRoleSchema), new UpdateUserRoleAdminController().handle)
+router.delete("/admin/users/:id", isAuthenticated, isAdmin, validateSchema(updateUserRoleParamsSchema), new DeleteUserAdminController().handle)
+
 export { router };
 
 

@@ -39,7 +39,7 @@ export function Login() {
             );
 
             toast.success("Login realizado com sucesso!", { position: "top-center" });
-            navigate("/");
+            navigate("/orders");
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const data = error.response?.data;
